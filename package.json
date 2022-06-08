@@ -10,10 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "ascii-art": "^2.8.5",
+    "asciify-image": "^0.1.8",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^5.0.0",
     "fluent-ffmpeg": "^2.1.2",
     "get-video-duration": "^4.1.0",
+    "image-to-ascii-art": "^0.0.4",
     "sharp": "^0.30.6"
   }
 }
