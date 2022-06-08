@@ -5,22 +5,26 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require("path");
 const asciify = require('asciify-image');
+const player = require('play-sound')(opts = {})
+
 ffmpeg.setFfmpegPath(pathToFfmpeg);
 
 
 getVideoDurationInSeconds('./public/gachi.mp4').then(async (duration) => {
     let fileNames = [];
-    const ASCII_CHARS = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ".split("");
-    const interval = ASCII_CHARS.length / 256;
-    const fps = 30;
+    const fps = 10;
     const size = 70;
     ffmpeg({source: './public/gachi.mp4'})
         .on('filenames', (filenames) => fileNames = filenames)
         .on('end', async () => {
+            player.play('public/gachi.mp4', function(err){
+                if (err) throw err
+            })
+
             async function* asyncIterator() {
                 while (fileNames.length) {
                     await new Promise((res) => {
-                        setTimeout(() => res(), 500);
+                        setTimeout(() => res(), 1000/fps/3);
                     })
                     const buffer = await sharp(path.join('screens', fileNames.shift()))
                         .resize(size, size, {fit: "fill"})
@@ -44,6 +48,6 @@ getVideoDurationInSeconds('./public/gachi.mp4').then(async (duration) => {
         })
         .takeScreenshots({
             filename: '%s_page.jpg',
-            timemarks: Array.from({length: Math.floor(duration * 2)}).map((_, i) => .5 * i)
+            timemarks: Array.from({length: Math.floor(duration * fps)}).map((_, i) => 1/fps * i)
         }, 'screens');
 })
