@@ -4,13 +4,12 @@ const player = require('play-sound')(opts = {});
 const sharp = require('sharp');
 const fs = require('fs');
 
-module.exports = async ({ fps, size}) => {
-    const frames = fs.readdirSync('./screens').filter(file => file.endsWith('.jpg'));
-    frames.sort((a, b) => (parseFloat(a) - parseFloat(b)));
+module.exports = async ({ fps, size, fileNames}) => {
+    const frames = fileNames.sort((a, b) => (parseFloat(a) - parseFloat(b)));
 
-    player.play('public/gachi.mp4', {afplay: ['-r', '.85']}, function(err){
-        if (err) throw err
-    });
+    // player.play('public/gachi.mp4', {afplay: ['-r', '.88']}, function(err){
+    //     if (err) throw err
+    // });
 
     async function* asyncIterator() {
         while (frames.length) {

@@ -11,24 +11,23 @@ ffmpeg.setFfmpegPath(pathToFfmpeg);
 getVideoDurationInSeconds('./public/gachi.mp4').then(async (duration) => {
     const config = {
         fps: 15,
-        size: 70
+        size: 70,
+        fileNames: fs.readdirSync('./screens').filter(file => file.endsWith('.jpg'))
     }
     const source = './public/gachi.mp4';
     let lastHash = null;
     let currentHash = crypto.createHash('md5').update(`${source}${duration}${config.fps}${config.size}`).digest('hex');
-    let fileNames = [];
+    lastHash = fs.readFileSync('./.cache.txt', 'utf8')
 
-    try {
-        lastHash = fs.readFileSync('./.cache.txt', 'utf8')
-    } catch {};
-
-    if (lastHash === currentHash) {
-        play(config)
-    } else {
-        fs.writeFileSync("./.cache.txt", currentHash);
+    if (lastHash === currentHash && config.fileNames.length) play(config);
+    else {
+        config.fileNames.forEach(file => fs.unlinkSync(path.join('./screens', file)))
         ffmpeg({source})
-            .on('filenames', (filenames) => fileNames = filenames)
-            .on('end', () => play(config))
+            .on('filenames', (filenames) => config.filenames = filenames)
+            .on('end', () => {
+                fs.writeFileSync("./.cache.txt", currentHash);
+                play(config);
+            })
             .on('error', (err) => {
                 console.log('Error', err)
             })
